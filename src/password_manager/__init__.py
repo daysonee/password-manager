@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from password-manager!")
+"""Консольный менеджер паролей с использованием Argon2id и Fernet"""

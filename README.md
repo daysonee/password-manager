@@ -1,2 +1,3 @@
 - [#Источник 1](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
 - [#Источник 2](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)
+- [#Источник 3](https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet)
