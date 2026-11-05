@@ -23,11 +23,12 @@ from password_manager.crypto import (
 class VaultError(Exception):
     """Ошибка работы с хранилищем"""
 
+
 class PasswordManager:
     """Менджер паролей, хранит записи в JSON"""
 
     def __init__(self, path: Path, params: KdfParams | None = None) -> None:
-        self._path =  path
+        self._path = path
         self._params = params if params is not None else KdfParams()
         self._data: dict[str, Any] = {}
         self._key: bytes | None = None
@@ -65,11 +66,11 @@ class PasswordManager:
         verify_hash = derive_key(password, verify_salt, self._params)
         self._key = derive_key(password, key_salt, self._params)
         self._data = {
-            "kdf" : asdict(self._params),
-            "key_salt" : to_b64(key_salt),
-            "verify_hash" : to_b64(verify_hash),
-            "verify_salt" : to_b64(verify_salt),
-            "entries" : {}
+            "kdf": asdict(self._params),
+            "key_salt": to_b64(key_salt),
+            "verify_hash": to_b64(verify_hash),
+            "verify_salt": to_b64(verify_salt),
+            "entries": {},
         }
         self._persist()
 
@@ -82,7 +83,7 @@ class PasswordManager:
         if not verify_password(password, salt, hash, params):
             return False
         key_salt = from_b64(self._data["key_salt"])
-        self._key=derive_key(password, key_salt, params)
+        self._key = derive_key(password, key_salt, params)
         return True
 
     def _require_unlocked(self) -> bytes:
@@ -98,8 +99,10 @@ class PasswordManager:
         for cur in self._data["entries"]:
             if cur == name:
                 raise VaultError("Имя занято, попробуйте другое")
-        self._data["entries"][name] = {"login" : encrypt(key, login),
-                                       "password" : encrypt(key, password)}
+        self._data["entries"][name] = {
+            "login": encrypt(key, login),
+            "password": encrypt(key, password),
+        }
         self._persist()
 
     def list_entries(self) -> list[str]:
@@ -107,7 +110,7 @@ class PasswordManager:
         self._require_unlocked()
         return sorted(self._data["entries"])
 
-    def get_entry(self, name : str) -> tuple[str, str]:
+    def get_entry(self, name: str) -> tuple[str, str]:
         """Возвращает логин и пароль от сервиса, если такого нет кидает VaultError"""
         key = self._require_unlocked()
         self._load()
@@ -116,7 +119,7 @@ class PasswordManager:
             raise VaultError("Такого сервиса не существует")
         return (decrypt(key, node["login"]), decrypt(key, node["password"]))
 
-    def delete_entry(self, name : str) -> None:
+    def delete_entry(self, name: str) -> None:
         """Удаляет запись о сервисе, если такого нет кидает VaultError"""
         self._require_unlocked()
         self._load()
